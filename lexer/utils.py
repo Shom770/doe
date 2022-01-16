@@ -4,12 +4,19 @@ from typing import Union
 class Constraint:
     """A helper class utilized for defining constraints when lexing regions."""
 
-    def __init__(self, constraints: dict):
-        self.constraints = [constraints]
+    def __init__(self, *constraints):
+        self.constraints = [*constraints]
+
+    def __repr__(self):
+        return f"Constraints({self.constraints})"
 
     def __or__(self, other: "Has") -> "Constraint":
         self.constraints.append({"constraint": other.constraint, "occurrences": other.occurrences})
         return self
+
+    def __eq__(self, other: "Constraint") -> bool:
+        """__eq__ is defined for testing purposes."""
+        return self.constraints == other.constraints
 
 
 class Has:
@@ -20,5 +27,8 @@ class Has:
         self.occurrences = occurrences
 
     def __or__(self, other: "Has") -> Constraint:
-        return Constraint({"constraint": other.constraint, "occurrences": other.occurrences})
+        return Constraint(
+            {"constraint": self.constraint, "occurrences": self.occurrences},
+            {"constraint": other.constraint, "occurrences": other.occurrences}
+        )
 
