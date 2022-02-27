@@ -1,6 +1,6 @@
 import unittest
 
-from lexer import utils
+from lexing import utils
 
 
 class TestConstraints(unittest.TestCase):
