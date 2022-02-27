@@ -1,9 +1,14 @@
 from collections import defaultdict
+from collections.abc import Iterable
 from typing import Union
+
+
+BASE_CASE = None  # Used for the base case of dispatching token kinds
 
 
 class TooManyOccurrences(Exception):
     """When the amount of occurrences specified in the constraints goes 'overboard'."""
+
 
 class Constraint:
     """A helper class utilized for defining constraints when lexing regions."""
@@ -58,3 +63,9 @@ class Has:
             {"constraint": other.constraint, "occurrences": other.occurrences}
         )
 
+
+class In:
+    """Helper class for checking if the token value is in the iterable provided, for dispatching the token kind."""
+
+    def __init__(self, iterable: Iterable):
+        self.iterable = iterable
