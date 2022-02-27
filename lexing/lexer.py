@@ -39,8 +39,8 @@ class Lexer:
                     return Token(kind=token_kind, value=token_value, start=start_position, end=end_position)
 
 
-lexer = Lexer("2.5324 hi")
+lexer = Lexer("25324")
 print(lexer.lex_region(
     constraints=Has(".", occurrences=1) | Has(int),
-    token_kinds={TokenKind.FLOAT: Has("."), TokenKind.INT: BASE_CASE})
+    token_kinds={TokenKind.FLOAT: Has("."), TokenKind.INTEGER: BASE_CASE})
 )

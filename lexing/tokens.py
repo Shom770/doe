@@ -23,7 +23,7 @@ class Token:
         self.position = (start, end)
 
     def __repr__(self):
-        return f"Token(kind={self.kind}, value={self.value}, start={self.start}, end={self.end})"
+        return f"Token(kind={self.kind}, value={self.value}, start={self.position[0]}, end={self.position[1]})"
 
     def __str__(self):
-        return f"{self.value} of kind {self.kind} at {self.start}:{self.end}"
+        return f"{self.value} of kind {self.kind} at {self.position[0]}:{self.position[1]}"
