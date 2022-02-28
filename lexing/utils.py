@@ -1,7 +1,5 @@
 from collections import defaultdict
-from collections.abc import Iterable
-from typing import Union
-
+from collections.abc import Callable, Iterable
 
 BASE_CASE = None  # Used for the base case of dispatching token kinds
 
@@ -34,6 +32,8 @@ class Constraint:
                     all_conditions.append(True)
                 except ValueError:
                     all_conditions.append(False)
+            elif isinstance(constraint["constraint"], Callable):
+                all_conditions.append(constraint["constraint"](item))
             else:
                 all_conditions.append(item == constraint["constraint"])
 
@@ -53,8 +53,8 @@ class Constraint:
 class Has:
     """A helper class used for lexing regions, and created for syntactic sugar."""
 
-    def __init__(self, string_or_type: Union[str, type], *, occurrences: int = None):
-        self.constraint = string_or_type
+    def __init__(self, string_type_or_method: str | type | Callable, *, occurrences: int = None):
+        self.constraint = string_type_or_method
         self.occurrences = occurrences
 
     def __or__(self, other: "Has") -> Constraint:
