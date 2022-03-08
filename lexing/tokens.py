@@ -29,6 +29,7 @@ class TokenKind(Enum):
     STRING = 24
     ARROW = 25
     DOUBLE_COLON = 26
+    COMMA = 27
 
 
 class Token:

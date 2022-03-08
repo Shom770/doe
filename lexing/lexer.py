@@ -32,7 +32,7 @@ class Lexer:
         }
         misc_mapping = {
             "=": TokenKind.EQUAL, "(": TokenKind.LPAREN, ")": TokenKind.RPAREN,
-            "{": TokenKind.LBRACE, "}": TokenKind.RBRACE
+            "{": TokenKind.LBRACE, "}": TokenKind.RBRACE, ",": TokenKind.COMMA
         }
         comp_mapping = {
             "<": TokenKind.LESS, ">": TokenKind.GREATER, "<=": TokenKind.LESSEQUAL,
@@ -48,6 +48,8 @@ class Lexer:
                         TokenKind.EXP, self.current_char + self._peek_ahead(),
                         self._position, next(self)
                     )
+                case ("-", ">"):
+                    yield Token(TokenKind.ARROW, "->", self._position, next(self))
                 case ("+" | "-" | "/" | "*" | "^" | "!" as operator, _):
                     yield Token(op_mapping[operator], self.current_char, self._position, self._position)
                 case ("<" | ">" | "!" | "=" as left_comp_op, "="):
@@ -57,10 +59,8 @@ class Lexer:
                     )
                 case ("<" | ">" | "!" as comp_op , _):
                     yield Token(comp_mapping[comp_op], self.current_char, self._position, self._position)
-                case ("=" | "(" | ")" | "{" | "}" as misc_char, _):
+                case ("=" | "(" | ")" | "{" | "}" | "," as misc_char, _):
                     yield Token(misc_mapping[misc_char], self.current_char, self._position, self._position)
-                case ("-", ">"):
-                    yield Token(TokenKind.ARROW, "->", self._position, next(self))
                 case (":", ":"):
                     yield Token(TokenKind.DOUBLE_COLON, "::", self._position, next(self))
                 case ("\"", _):
