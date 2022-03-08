@@ -1,4 +1,6 @@
-x = 5.23 / 2
-if x == 2 {
-    print("Yes!")
-}
+func calculate(x, y) -> x + y
+
+func main() {
+  x = input("First number")
+  y = input("Second number")
+} -> calculate(x::int, y::int)

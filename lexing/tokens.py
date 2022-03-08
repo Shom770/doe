@@ -26,8 +26,9 @@ class TokenKind(Enum):
     GREATEREQUAL = 21
     EXCLAMATION = 22
     EXP = 23
-    DOUBLE_QUOTE = 24
+    STRING = 24
     ARROW = 25
+    DOUBLE_COLON = 26
 
 
 class Token:

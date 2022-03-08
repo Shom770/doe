@@ -2,7 +2,7 @@ from .tokens import Token, TokenKind
 from .utils import BASE_CASE, Constraint, Has, In
 
 
-KEYWORDS = ["for"]
+KEYWORDS = ["for", "func"]
 
 
 class Lexer:
@@ -32,7 +32,7 @@ class Lexer:
         }
         misc_mapping = {
             "=": TokenKind.EQUAL, "(": TokenKind.LPAREN, ")": TokenKind.RPAREN,
-            "{": TokenKind.LBRACE, "}": TokenKind.RBRACE, "\"": TokenKind.DOUBLE_QUOTE
+            "{": TokenKind.LBRACE, "}": TokenKind.RBRACE
         }
         comp_mapping = {
             "<": TokenKind.LESS, ">": TokenKind.GREATER, "<=": TokenKind.LESSEQUAL,
@@ -57,10 +57,18 @@ class Lexer:
                     )
                 case ("<" | ">" | "!" as comp_op , _):
                     yield Token(comp_mapping[comp_op], self.current_char, self._position, self._position)
-                case ("=" | "(" | ")" | "{" | "}" | "\"" as misc_char, _):
+                case ("=" | "(" | ")" | "{" | "}" as misc_char, _):
                     yield Token(misc_mapping[misc_char], self.current_char, self._position, self._position)
                 case ("-", ">"):
                     yield Token(TokenKind.ARROW, "->", self._position, next(self))
+                case (":", ":"):
+                    yield Token(TokenKind.DOUBLE_COLON, "::", self._position, next(self))
+                case ("\"", _):
+                    yield self._lex_region(
+                        Has("\"", occurrences=2, enforce_occurrences=True) | Has(str),
+                        token_kinds=TokenKind.STRING,
+                        add_occurrence="\""
+                    )
                 case (char, _) if char.isnumeric() or char == ".":
                     yield self._lex_region(
                         Has(".", occurrences=1) | Has(int),
@@ -74,14 +82,22 @@ class Lexer:
 
             next(self)
 
-    def _lex_region(self, constraints: Constraint | Has, token_kinds: TokenKind | dict[Has | In]):
+    def _lex_region(
+        self,
+        constraints: Constraint | Has,
+        token_kinds: TokenKind | dict[Has | In],
+        add_occurrence: str | None = None
+    ):
         if isinstance(constraints, Has):
             constraints = Constraint(constraints.__dict__)
+
+        if add_occurrence:
+            constraints.existing_occurrences[add_occurrence] += 1
 
         token_value = self.current_char
         start_position = self._position
 
-        while self.current_char and self.current_char in constraints:
+        while self.current_char:
             next(self)
             if self.current_char not in constraints:
                 self._position -= 1
